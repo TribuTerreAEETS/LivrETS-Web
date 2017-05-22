@@ -115,7 +115,10 @@ $(document).ready(function () {
                 data: {
                     LivrETSID: livretsId
                 },
-                success: function (data) {
+                success: function (data, message, event) {
+                    if (event.status == 204) 
+                        return
+                    
                     var element = $("<tr>")
                         .append($("<td>").text(data.id).addClass("livretsid"))
                         .append($("<td>").text(data.articleTitle))
@@ -147,14 +150,15 @@ $(document).ready(function () {
                                 $.notifyError("Une erreur est survenue. Svp réessayez.")
                             }
                         }
-                    })
+                    });
                 },
                 statusCode: {
-                    204: function () {
-                        $.notifyWarning("Cet article est déjà vendu.")
+                    204: function (data, message, event) {
+                        console.log(data)
+                        $.notifyError(event.statusText)
                     },
                     400: function (event, message) {
-                        $.notifyError("L'identificateur n'est pas valide.")
+                        $.notifyError(event.statusText)
                     },
                     500: function (event, message) {
                         $.notifyError("Une erreur est survenue. Svp réessayez.")

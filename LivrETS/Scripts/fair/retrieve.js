@@ -27,7 +27,7 @@ $(document).ready(function () {
         var ids = $.map($("#articles-table").find(".article-livretsid"), function (element) {
             return element.innerText.toUpperCase().trim()
         })
-
+        
         $.ajax({
             method: "POST",
             url: "/Fair/RetrieveArticles",
@@ -45,7 +45,7 @@ $(document).ready(function () {
                     $.notifyError("Une erreur est survenue. Svp réessayer.")
                 }
             }
-        })
+        });
     });
 
     $("#in-barcode").on("keyup", function (event) {
@@ -92,6 +92,7 @@ $(document).ready(function () {
                 },
                 columns: [
                     {
+                        "class": "article-livretsid",
                         data: function (val) {
                             return val.id;
                         }

@@ -170,7 +170,7 @@ namespace LivrETS.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound);
 
             var offersNotSold = currentFair.Offers
-                //.Where(offer => !offer.Sold)
+                .Where(offer => offer.Article.FairState != ArticleFairState.RETREIVED)
                 .Intersect(user.Offers);
             
             return  Json(from offer in offersNotSold
@@ -189,16 +189,24 @@ namespace LivrETS.Controllers
         [HttpPost]
         public ActionResult RetrieveArticles(ICollection<string> ids)
         {
+            bool status = false;
+            string message = null;
+
             foreach (var id in ids)
             {
+                if (id == null)
+                    continue;
+
                 TRIBSTD01Helper helper;
                 try
                 {
+                    status = true;
+                    message = "Recuperation faite";
                     helper = new TRIBSTD01Helper(id.ToUpper().Trim());
                 }
                 catch (RegexNoMatchException ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    message = ex.Message;
                     continue;
                 }
 
@@ -206,15 +214,12 @@ namespace LivrETS.Controllers
                 Repository.AttachToContext(offer);
                 offer.Article.MarkAsRetrieved();
                 Repository.Update();
-
-                //send notification mail
-                /*NotificationManager.getInstance().sendNotification(
-                    new Notification(NotificationOptions.ARTICLERETREIVEDCONFIRMATION,
-                                Repository.GetOfferByUser(offer))
-                    );*/
             }
 
-            return Json(new { }, contentType: "application/json");
+            return Json(new {
+                status = status,
+                message = message
+            }, contentType: "application/json");
         }
 
         public ActionResult ConcludeSell(ICollection<string> ids)
@@ -328,11 +333,6 @@ namespace LivrETS.Controllers
                 {
                     Offer = currentOffer
                 });
-
-                /*NotificationManager.getInstance().sendNotification(
-                    new Notification(NotificationOptions.ARTICLEMARKEDASSOLDDURINGFAIR,
-                        Repository.GetOfferByUser(currentOffer))
-                );*/
             }
 
             seller.Sales.Add(sale);
@@ -363,7 +363,7 @@ namespace LivrETS.Controllers
             var offer = helper.GetOffer();
 
             if (offer.Sold)
-                return new HttpStatusCodeResult(HttpStatusCode.NoContent);
+                return new HttpStatusCodeResult(HttpStatusCode.NoContent, "Cet article est déjà vendu");
             else
                 return Json(new
                 {
