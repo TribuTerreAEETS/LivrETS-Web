@@ -92,7 +92,7 @@
                                         <label>Date de début :</label>
                                         <div class="input-group date">
                                             <input type="text" class="form-control input-sm activity_start_date"
-                                                   value="@fs.StartDateTime">
+                                                   value="@fs.StartDateTime.ToString("yyyy-MM-dd HH:mm")">
                                             <div class="input-group-addon">
                                                 <span class="glyphicon glyphicon-calendar"></span>
                                             </div>
@@ -102,7 +102,7 @@
                                         <label>Date de fin :</label>
                                         <div class="input-group date">
                                             <input type="text" class="form-control input-sm activity_end_date"
-                                                   value="@fs.EndDateTime">
+                                                   value="@fs.EndDateTime.ToString("yyyy-MM-dd HH:mm")">
                                             <div class="input-group-addon">
                                                 <span class="glyphicon glyphicon-calendar"></span>
                                             </div>
