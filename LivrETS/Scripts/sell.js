@@ -20,7 +20,7 @@ $(document).ready(function () {
     'use strict';
 
     $('[data-toggle="popover"]').popover();
-    changeType($("input[name='Type']:checked").val());
+    changeType($("[name='Type']:checked").val());
 
     document.getElementById("imageupload").addEventListener("change", function () {
         var $error = $(".error-img");
@@ -81,8 +81,8 @@ $(document).ready(function () {
         $("#hidden-acronym").val(val);
     }
 
-    $("#courses-list").on("change", "li>input[name='Course']", function () {
-        setHiddenAcronym($("input[name='Course']:checked").val())
+    $("#courses-list").on("change", "[name='Acronym']", function () {
+        setHiddenAcronym($("[name='Acronym']:selected").val())
     });
 
     $("input[name='SellingStrategy']").on("change", function () {
@@ -95,7 +95,7 @@ $(document).ready(function () {
         }
     });
     
-    $("input[name='Type']").on('change', function () {
+    $("[name='Type']").on('change', function () {
         changeType($(this).val())
     });
 
@@ -136,20 +136,13 @@ $(document).ready(function () {
                 url: "/Offer/AddNewCourse",
                 data: { acronym: courseTxt.substr(0, 3).toUpperCase() + "" + courseTxt.substr(3, 6) },
                 success: function (data) {
-                    var newCourseElement = $("<li>")
-                        .append($("<input>") 
-                            .attr("id", data['courseId'])
-                            .attr("type", "radio")
-                            .attr("name", "Course")
-                            .attr("value", data["acronym"]))
-                        .append($("<label>")
-                            .attr("for", data["courseId"])
-                            .text(data["acronym"]));
-
                     setHiddenAcronym(data["acronym"])  
-                    $('#btn-choice-class').text(data["acronym"])
+                    //$('#btn-choice-class').text(data["acronym"])
 
-                    $("#courses-list").append(newCourseElement);
+                    $("#courses-list").append("<option value='" + data["acronym"] + "'>" + data["acronym"] + "</option>");
+                    $("#courses-list").selectpicker("refresh");
+                    $('#courses-list').selectpicker('val', data["acronym"]);
+
                     courseTextInput.val("");
                     restoreButton();
                     $.notifySuccess("Le cours a été ajouté à la liste avec succès!");
@@ -202,6 +195,7 @@ $(document).ready(function () {
             },
             success: function (data) {
                 if (data.status == 1) {
+                    $.notifySuccess("Image supprimé");
                     $btn.prop("disabled", false);
                     $modal.modal('hide');
                     $loading.addClass("hide");
@@ -222,7 +216,6 @@ $(document).ready(function () {
 
     //update form article
     function changeType(value) {
-        
         if (value === 'C') {
             $("#calculator-models-dropdown").show('fast');
             $("#isbn-text-input").hide('fast');

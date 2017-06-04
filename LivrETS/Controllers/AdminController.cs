@@ -329,7 +329,7 @@ namespace LivrETS.Controllers
 
         // DELETE: /Admin/DeleteFair
         // Deletes one or more fairs.
-        [HttpDelete]
+        [HttpPost]
         public ActionResult DeleteFair(string id)
         {
             bool status = Repository.DeleteFair(id);

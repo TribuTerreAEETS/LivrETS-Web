@@ -109,7 +109,7 @@ $(document).ready(function () {
 
         $btn.prop("disabled", true);
         $.ajax({
-            method: "DELETE",
+            method: "POST",
             contentType: "application/json",
             url: "/Admin/DeleteFair",
             dataType: "json",

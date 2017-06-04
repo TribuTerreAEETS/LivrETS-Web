@@ -158,7 +158,22 @@
                 <div class="col-md-1">
                     <!-- dropdowns-enhancement.js -->
                     <div class="btn-group">
-                        <button data-toggle="dropdown" class="btn btn-default dropdown-toggle" id="btn-choice-class">
+                        <select class="selectpicker" data-live-search="true" name="Acronym" id="courses-list">
+                            <option value="not-applicable">Choisir...</option>
+                            @foreach (Course course in Model.Courses)
+                            {
+                                if (course.Acronym.Equals(Model.Acronym))
+                                {
+                                    <option selected value="@course.Acronym">@course.Acronym</option>
+                                }
+                                else
+                                {
+                                    <option value="@course.Acronym">@course.Acronym</option>
+                                }
+
+                            }
+                        </select>
+                        <!--<button data-toggle="dropdown" class="btn btn-default dropdown-toggle" id="btn-choice-class">
                             @Model.Acronym
                         <span class="caret"></span></button>
                         <ul id="courses-list" class="dropdown-menu">
@@ -172,7 +187,7 @@
                                     <label for="@course.Id">@course.Acronym</label>
                                 </li>
                             }
-                        </ul>
+                        </ul>-->
                     </div>
                 </div>
                 <div class="col-md-2 col-md-offset-2">
@@ -180,9 +195,9 @@
                 </div>
                 <div class="col-md-2">
                     <div class="input-group">
-                        <input type="text" id="newCourse" class="form-control input-sm" placeholder="Sigle du cours" />
+                        <input type="text" id="newCourse" class="form-control" placeholder="Sigle du cours" />
                         <span class="input-group-btn">
-                            <button id="btn-newCourse" class="btn btn-default btn-sm" type="button"><span class="glyphicon glyphicon-plus"></span></button>
+                            <button id="btn-newCourse" class="btn btn-default" type="button"><span class="glyphicon glyphicon-plus"></span></button>
                         </span>
                     </div>
                     <div class="row">
