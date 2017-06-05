@@ -88,23 +88,38 @@
             </div><br /><br />
 
         <!-- BEGIN ISBN -->
+            
             <div class="row">
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.ISBN, new { @class = "control-label" })
-
-                    <a style="color: black;" role="button" data-html="true" data-placement="right" data-toggle="popover" data-trigger="focus" 
-                        data-content='<div><b>ISBN</b><br><img src="/Images/isbn.jpg" ></div><div><b>Code</b><br><img src="/Images/code_barre.jpg" ></div>'>
-
-                        <span class="glyphicon glyphicon-question-sign"></span>
-                    </a>
+                <div class="col-md-2">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="control-label">Type de l'article</label>
+                        </div>
+                    </div>
+                    <!-- dropdowns-enhancement.js -->
+                    <div class="btn-group">
+                        <select class="selectpicker" name="Type" id="article-type">
+                            <option value="@Article.BOOK_CODE">Livre</option>
+                            <option value="@Article.COURSE_NOTES_CODE">Notes de cours</option>
+                            <option value="@Article.CALCULATOR_CODE">Calculatrice</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-4 col-md-offset-1">
+                    <div class="row">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.ISBN, new { @class = "control-label" })
+
+                            <a style="color: black;" href="#" data-html="true" data-placement="right" data-toggle="popover" data-trigger="focus"
+                                data-content='<div><b>ISBN</b><br><img src="/Images/isbn.jpg"></div><div><b>Code</b><br><img src="/Images/code_barre.jpg"></div>'>
+
+                                <span class="glyphicon glyphicon-question-sign"></span>
+                            </a>
+                        </div>
+                    </div>
                     @Html.TextBoxFor(model => model.ISBN, new { @class = "form-control", id = "isbn-text-input" })
                     <!-- dropdowns-enhancement.js -->
                     <div id="calculator-models-dropdown" style="display: none;">
-                        
                         <select class="selectpicker" name="TypeModel">
                             <option id = "radio-voyage200" value="@CalculatorModel.VOYAGE200">Voyage 200</option>
                             <option id = "radio-nspire" value="@CalculatorModel.NSPIRE">NSpire</option>
@@ -128,18 +143,7 @@
                         </ul>-->
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <!-- dropdowns-enhancement.js -->
-                    <div class="btn-group">
-                        
-                        <!--<button data-toggle="dropdown" class="btn btn-default dropdown-toggle">Type <span class="caret"></span></button>-->
-                        <select class="selectpicker" name = "Type">
-                            <option value="@Article.BOOK_CODE">Livre</option>
-                            <option value="@Article.COURSE_NOTES_CODE">Notes de cours</option>
-                            <option value="@Article.CALCULATOR_CODE">Calculatrice</option>
-                        </select>
-                    </div>
-                </div>
+                
             </div>
             <div class="row">
                 <div class="col-md-12">

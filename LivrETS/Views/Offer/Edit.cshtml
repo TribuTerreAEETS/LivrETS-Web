@@ -69,68 +69,60 @@
 
         <!-- BEGIN ISBN -->
             <div class="row">
-                <div class="col-md-12">
-                    @Html.LabelFor(model => model.ISBN, new { @class = "control-label" })
-                    <a style="color: black;" role="button" data-html="true" data-placement="right" data-toggle="popover"
-                       data-content='<div><b>ISBN</b><br><img src="/Images/isbn.jpg" ></div><div><b>Code</b><br> <img src="/Images/code_barre.jpg" ></div>'>
-
-                        <span class="glyphicon glyphicon-question-sign"></span>
-                    </a>
-                </div>
-                
-            </div>
-            <div class="row">
-                <div class="col-md-5">
-                    <div id="txt-isbn">
-                        @Html.TextBoxFor(model => model.ISBN,
-                            new { @class = "form-control", id = "isbn-text-input" })
+                <div class="col-md-2">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="control-label">Type de l'article</label>
+                        </div>
                     </div>
                     <!-- dropdowns-enhancement.js -->
-                    <div id="calculator-models-dropdown" class="btn-group" style="display: none;">
+                    <div class="btn-group">
+                        <select class="selectpicker" name="Type" id="article-type">
+                            <option value="@Article.BOOK_CODE">Livre</option>
+                            <option value="@Article.COURSE_NOTES_CODE">Notes de cours</option>
+                            <option value="@Article.CALCULATOR_CODE">Calculatrice</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4 col-md-offset-1">
+                    <div class="row">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.ISBN, new { @class = "control-label" })
+
+                            <a style="color: black;" href="#" data-html="true" data-placement="right" data-toggle="popover" data-trigger="focus"
+                               data-content='<div><b>ISBN</b><br><img src="/Images/isbn.jpg"></div><div><b>Code</b><br><img src="/Images/code_barre.jpg"></div>'>
+
+                                <span class="glyphicon glyphicon-question-sign"></span>
+                            </a>
+                        </div>
+                    </div>
+                    @Html.TextBoxFor(model => model.ISBN, new { @class = "form-control", id = "isbn-text-input" })
+                    <!-- dropdowns-enhancement.js -->
+                    <div id="calculator-models-dropdown" style="display: none;">
+                        <select class="selectpicker" name="TypeModel">
+                            <option id="radio-voyage200" value="@CalculatorModel.VOYAGE200">Voyage 200</option>
+                            <option id="radio-nspire" value="@CalculatorModel.NSPIRE">NSpire</option>
+                        </select>
+                        <!--
+
                         <button data-toggle="dropdown" class="btn btn-default dropdown-toggle">
-                            @Model.CalculatorModel <span class="caret"></span>
+                                Mod&egrave;le <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu">
+                            <ul class="dropdown-menu">
                             <li>
-                                @Html.RadioButtonFor(model => model.TypeModel, CalculatorModel.VOYAGE200, 
+                                @Html.RadioButtonFor(model => model.TypeModel, CalculatorModel.VOYAGE200,
                                     new { id = "radio-voyage200" })
                                 <label for="radio-voyage200">Voyage 200</label>
                             </li>
                             <li>
-                                @Html.RadioButtonFor(model => model.TypeModel, CalculatorModel.NSPIRE, 
+                                @Html.RadioButtonFor(model => model.TypeModel, CalculatorModel.NSPIRE,
                                     new { id = "radio-nspire" })
                                 <label for="radio-nspire">NSpire</label>
                             </li>
-                        </ul>
+                        </ul>-->
                     </div>
                 </div>
-                <div class="col-md-1 text-left">
-                    <!-- dropdowns-enhancement.js -->
-                    <div class="btn-group hide">
-                        
-                        <button data-toggle="dropdown" class="btn btn-default dropdown-toggle">
-                            @Model.TypeModel <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                @Html.RadioButtonFor(model => model.Type, Article.BOOK_CODE, 
-                                    new { id = "Book", name = "Article" })
-                                <label for="Book">Livre</label>
-                            </li>
-                            <li>
-                                @Html.RadioButtonFor(model => model.Type, Article.COURSE_NOTES_CODE, 
-                                    new { id = "CourseNotes", name = "Article" })
-                                <label for="CourseNotes">Notes de cours</label>
-                            </li>
-                            <li>
-                                @Html.RadioButtonFor(model => model.Type, Article.CALCULATOR_CODE, 
-                                    new { id = "Calculator", name = "Article" })
-                                <label for="Calculator">Calculatrice</label>
-                            </li>
-                        </ul>
-                    </div>
 
-                </div>
             </div>
             <div class="row">
                 <div class="col-md-12">

@@ -52,7 +52,7 @@ namespace LivrETS.ViewModels
             }
         }
 
-        [Display(Name = "ISBN ou Code ou Modèle")]
+        [Display(Name = "ISBN ou Code ou Modèle", AutoGenerateField = false)]
         public string ISBN { get; set; }
 
         [Required(ErrorMessage = "Veuillez indiquer un titre à votre offre.")]
