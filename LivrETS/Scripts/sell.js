@@ -82,7 +82,7 @@ $(document).ready(function () {
     }
 
     $("#courses-list").on("change", "[name='Acronym']", function () {
-        setHiddenAcronym($("[name='Acronym']:selected").val())
+        setHiddenAcronym($("[name='Acronym']:selected").val());
     });
 
     $("input[name='SellingStrategy']").on("change", function () {
@@ -96,7 +96,7 @@ $(document).ready(function () {
     });
     
     $("[name='Type']").on('change', function () {
-        changeType($(this).val())
+        changeType($(this).val());
     });
 
     $("#btn-newCourse").on("click", function () {
@@ -136,7 +136,7 @@ $(document).ready(function () {
                 url: "/Offer/AddNewCourse",
                 data: { acronym: courseTxt.substr(0, 3).toUpperCase() + "" + courseTxt.substr(3, 6) },
                 success: function (data) {
-                    setHiddenAcronym(data["acronym"])  
+                    setHiddenAcronym(data["acronym"]);
                     //$('#btn-choice-class').text(data["acronym"])
 
                     $("#courses-list").append("<option value='" + data["acronym"] + "'>" + data["acronym"] + "</option>");

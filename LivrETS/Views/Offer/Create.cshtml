@@ -124,23 +124,6 @@
                             <option id = "radio-voyage200" value="@CalculatorModel.VOYAGE200">Voyage 200</option>
                             <option id = "radio-nspire" value="@CalculatorModel.NSPIRE">NSpire</option>
                         </select>
-                        <!--
-                            
-                        <button data-toggle="dropdown" class="btn btn-default dropdown-toggle">
-                                Mod&egrave;le <span class="caret"></span>
-                        </button>
-                            <ul class="dropdown-menu">
-                            <li>
-                                @Html.RadioButtonFor(model => model.TypeModel, CalculatorModel.VOYAGE200, 
-                                    new { id = "radio-voyage200" })
-                                <label for="radio-voyage200">Voyage 200</label>
-                            </li>
-                            <li>
-                                @Html.RadioButtonFor(model => model.TypeModel, CalculatorModel.NSPIRE, 
-                                    new { id = "radio-nspire" })
-                                <label for="radio-nspire">NSpire</label>
-                            </li>
-                        </ul>-->
                     </div>
                 </div>
                 
@@ -180,23 +163,6 @@
                                 <option value="@course.Acronym">@course.Acronym</option>
                             }
                         </select>
-
-                        <!--<button data-toggle="dropdown" class="btn btn-default dropdown-toggle" id="btn-choice-class">
-                            Choisir... <span class="caret"></span>
-                        </button>
-                        <ul id="courses-list" class="dropdown-menu">
-                            <li>
-                                <input type="radio" id="not-applicable" name="Course" value="not-applicable" />
-                                <label for="not-applicable">Non Applicable</label>
-                            </li>
-                            @foreach (Course course in Model.Courses)
-                            {
-                                <li>
-                                    <input type="radio" id="@course.Id" name="Course" value="@course.Acronym" />
-                                    <label for="@course.Id">@course.Acronym</label>
-                                </li>
-                            }
-                        </ul>-->
                     </div>
                 </div>
                 <div class="col-md-2 col-md-offset-2">

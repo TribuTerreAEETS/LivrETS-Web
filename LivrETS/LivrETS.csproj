@@ -344,7 +344,6 @@
     <Content Include="Images\code_barre.jpg" />
     <Content Include="Images\isbn.jpg" />
     <Content Include="Images\logos\aeets.png" />
-    <Content Include="Images\logos\coopets.jpg" />
     <Content Include="Images\logos\ets.png" />
     <Content Include="Images\logos\favicon.ico" />
     <Content Include="Images\logos\fddaeets.png" />
