@@ -366,6 +366,7 @@ namespace LivrETS.Controllers
                 {
                     if(role.Equals("Administrator"))
                         UserManager.AddToRole(user.Id, "Administrator");
+                    
                 }
 
                 /*if (!roleResult.Succeeded)

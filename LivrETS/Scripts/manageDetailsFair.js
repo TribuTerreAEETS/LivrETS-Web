@@ -17,41 +17,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 $(document).ready(function () {
 
+    //table pour la liste des article
+    var UNKNOWN = 0,
+        PICKED = 1,
+        SOLD = 2,
+        RETREIVED = 3;
+
+    $.fn.dataTable.ext.errMode = 'throw';
     var table = $('#tab-offers').DataTable({
         processing: true,
+        createdRow: function (row, data, index) {
+            $(row).addClass('text-center');
+            if (parseInt(data.FairState) != parseInt(RETREIVED))
+                $(row).addClass('warning');
+            
+        },
         ajax: {
             url: "/Admin/ListOffersFair",
             data: { id: $("span.fairId").text()},
             type: "POST",
             dataType: "JSON",
             dataSrc: function (val) {
-                console.log(val)
                 return val.Offers
             }
         },
         columns: [
            {
-               class: "check-row text-center",
-               sortable: false,
                data: function (val) {
-                   
-                   return "<input type='checkbox' name='check-select-offer' data-offer-id='" + val.Id + "' />";
+                   return val.UserName;
+               }
+           },
+           {
+               data: function (val) {
+                   return val.UserMail;
                }
            },
             {
-                class: "col-md-5",
                 data: function (val) {
                     return "<a href='/Offer/Details/" + val.Id + "'>" + val.Title + "</a>";
                 }
             },
             {
-                class: "text-center",
                 data: function (val) {
                     return parseFloat(val.Price).toFixed(2)+ " $";
                 }
             },
             {
-                class: "text-center",
                 data: function (val) {
                     if (val.Sold) {
                         return "Vendu";
@@ -62,13 +73,8 @@ $(document).ready(function () {
                 }
             },
             {
-                class: "text-center",
                 data: function (val) {
-                    var fairState = val.Article.FairState;
-                    var UNKNOWN = 0,
-                        PICKED = 1,
-                        SOLD = 2,
-                        RETREIVED = 3;
+                    var fairState = val.FairState;
 
                     if (fairState == RETREIVED)
                         return "Récupéré";
@@ -87,7 +93,6 @@ $(document).ready(function () {
                 class: "col-md-2 text-center"
             },
             {
-                class: "text-center",
                 sortable: false,
                 visible: false,
                 data: function (val) {

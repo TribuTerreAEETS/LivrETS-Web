@@ -58,6 +58,7 @@ namespace LivrETS.Controllers
 
             Offer offer = Repository.GetOfferById(id);
             DateTime now = offer.StartDate;
+            var user = Repository.GetOfferByUser(offer);
 
             if (DateTime.Compare(offer.MarkedSoldOn, now) != 0 || 
                 DateTime.Compare(offer.Article.DeletedAt, now) != 0)

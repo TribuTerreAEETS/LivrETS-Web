@@ -193,14 +193,33 @@ namespace LivrETS.Controllers
             DateTime now = DateTime.Now;
             var currentFairStepsS = currentFair.FairSteps.Where(step => step.Phase.Equals("S")).FirstOrDefault();
 
-            if(currentFairStepsS != null) { }
-                if(DateTime.Compare(now.Date, currentFairStepsS.StartDateTime.Date) >= 0)
-                    Offers = currentFair.Offers.Where(offer => 
-                        DateTime.Compare(offer.StartDate, offer.Article.DeletedAt) == 0).ToList();
+            
+            if (currentFairStepsS != null)
+            {
+                if (DateTime.Compare(now.Date, currentFairStepsS.StartDateTime.Date) >= 0)
+                {
+                    return Json(new
+                    {
+                        Offers = currentFair.Offers.Where(offer =>
+                            DateTime.Compare(offer.StartDate, offer.Article.DeletedAt) == 0).Select(offer => new
+                            {
+                                Id = offer.Id,
+                                Title = offer.Title,
+                                Price = offer.Price,
+                                Sold = offer.Sold,
+                                FairState = offer.Article.FairState,
+                                StartDate = offer.StartDate,
+                                UserMail = Repository.GetOfferByUser(offer).Email,
+                                UserName = Repository.GetOfferByUser(offer).FirstName +" "+ Repository.GetOfferByUser(offer).LastName
+                            }
+                        ).ToList()
+                    }, contentType: "application/json");
+                }   
+            }
 
             return Json(new
             {
-               Offers
+                Offers = new { }
             }, contentType: "application/json");
         }
 

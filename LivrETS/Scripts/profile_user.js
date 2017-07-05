@@ -19,7 +19,7 @@
             type: "POST",
             dataType: "JSON",
             dataSrc: function (val) {
-                console.log(val)
+                //console.log(val)
                 return val.Offers
             }
         },
