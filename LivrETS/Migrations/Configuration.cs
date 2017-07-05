@@ -48,7 +48,7 @@ namespace LivrETS.Migrations
             context.Roles.AddOrUpdate(
                 role => role.Name,
                 new IdentityRole { Name = "Administrator" },
-                new IdentityRole { Name = "Clerk" }
+                new IdentityRole { Name = "Bénévole" }
             );
 
             context.Courses.AddOrUpdate(

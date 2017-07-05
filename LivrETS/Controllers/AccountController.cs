@@ -335,28 +335,42 @@ namespace LivrETS.Controllers
             return View();
         }
 
-        // GET: /Account/Historic
+        // GET: /Account/RemoveRole
+        [HttpGet]
+        public ActionResult RemoveRole(string roleName = null)
+        {
+            if (roleName == null)
+                roleName = "Clerk";
+            var rm = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(new ApplicationDbContext()));
+            if (rm.RoleExists(roleName)) {
+                rm.Delete(rm.FindByName(roleName));
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        // GET: /Account/initRole
         [HttpGet]
         public ActionResult InitRole()
         {
             var rm = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(new ApplicationDbContext()));
             ApplicationUser user = UserManager.FindByEmail("willy.kouagnia-nyandjou.1@etsmtl.net");
 
-            string[] roles = { "Administrator", "Clerk" };
+            string[] roles = { "Administrator", "Bénévole" };
             foreach(string role in roles)
             {
                 IdentityResult roleResult = null;
                 if (!rm.RoleExists(role))
+                {
                     roleResult = rm.Create(new IdentityRole(role));
-                else
+                }else
                 {
                     if(role.Equals("Administrator"))
                         UserManager.AddToRole(user.Id, "Administrator");
                 }
 
-                if (!roleResult.Succeeded)
+                /*if (!roleResult.Succeeded)
                     if (role.Equals("Administrator"))
-                        UserManager.AddToRole(user.Id, "Administrator");
+                        UserManager.AddToRole(user.Id, "Administrator");*/
 
             }
 

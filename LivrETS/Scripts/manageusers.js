@@ -91,10 +91,9 @@ $(document).ready(function () {
                                 "data-userid='" + val.Id + "' class='elt-role'>" +
                                 listRoles[i].Name + "</a></li>";
                         }
-                        
                     }
 
-                    html += "<li><a href='#' data-rolename='anonymous' data-userid='" + val.Id + "' class='elt-role'>user</a></li>";
+                    html += "<li><a href='#' data-rolename='anonymous' data-userid='" + val.Id + "' class='elt-role'>Étudiant</a></li>";
                     html += "</ul>";
                     html += "</div>";
                     return html;
