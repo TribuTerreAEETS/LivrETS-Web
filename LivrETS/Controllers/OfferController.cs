@@ -4,6 +4,7 @@ using LivrETS.Repositories;
 using LivrETS.Service.IO;
 using LivrETS.ViewModels;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
@@ -59,10 +60,33 @@ namespace LivrETS.Controllers
             Offer offer = Repository.GetOfferById(id);
             DateTime now = offer.StartDate;
             var user = Repository.GetOfferByUser(offer);
+            bool flagRole = false;
+            var rm = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(new ApplicationDbContext()));
+            var usermanager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindByEmail(user.Email);
+            foreach (var role in usermanager.Roles)
+            {
+                if (rm.FindById(role.RoleId).Name.Equals("Administrator"))
+                {
+                    flagRole = true;
+                    break;
+                }  
+            }
+                
 
             if (DateTime.Compare(offer.MarkedSoldOn, now) != 0 || 
                 DateTime.Compare(offer.Article.DeletedAt, now) != 0)
+            {
+                    if (flagRole)
+                        return View(offer);
                 throw new HttpException(404, "Page not Found");
+            }
+            
+            if (offer.ManagedByFair)
+            {
+                if (flagRole)
+                    return View(offer);
+                throw new HttpException(404, "Page not Found");
+            } 
 
             return View(offer);
         }
@@ -111,7 +135,10 @@ namespace LivrETS.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(ArticleViewModel model)
         {
+            bool flagFair = false;
             var course = Repository.GetCourseByAcronym(model.Acronym);
+            var curentFair = Repository.GetCurrentFair();
+            var nextFair = Repository.GetNextFair();
 
             if (model.Type != Article.CALCULATOR_CODE && string.IsNullOrEmpty(model.ISBN))
             {
@@ -185,10 +212,6 @@ namespace LivrETS.Controllers
                 
                 if (model.ForNextFair)
                 {  
-                    var curentFair = Repository.GetCurrentFair();
-                    var nextFair = Repository.GetNextFair();
-                    bool flagFair = false;
-
                     if (curentFair != null)
                     {
                         foreach (var step in curentFair.FairSteps)
@@ -230,7 +253,8 @@ namespace LivrETS.Controllers
             }
             else
             {
-                ViewBag.flagFair = false;
+                if (curentFair != null || nextFair != null)
+                    ViewBag.flagFair = true;
                 model.Courses = Repository.GetAllCourses().ToList();
                 return View(model);
             }

@@ -17,113 +17,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 
 $(document).ready(function () {
-    $("#btn-cash-ok").prop("disabled", true);
 
-    $.sameWidthForElements.apply(this, [
-        $("#subtotal-addon"),
-        $("#commission-addon"),
-        $("#total-addon")
-    ])
-
-    $("#btn-reinitialize").on("click", function () {
-        window.location.reload()
-    })
-
-    $("#btn-conclude").on("click", function () {
-        $("#modal-cash").modal("show")
-    })
-
-    var total = 0;
-    var cashReceived = 0;
-
-    $("#btn-cash-ok").on("click", function () {
-        if ($("#modal-cash").is(":visible")) {
-            $("#modal-cash").modal("hide")
-        }
-
-        var ids = $.map($("#articles-table>tbody").find("td.livretsid"), function (element) {
-            return element.innerText
-        })
-        
-        if ((cashReceived - total) >= 0) {
-            $.ajax({
-                method: "POST",
-                url: "/Fair/ConcludeSell",
-                dataType: "json",
-                data: {
-                    ids: ids
-                },
-                success: function () {
-                    $.notifySuccess("Vente réussi")
-                    setTimeout(function () {
-                        window.location.reload(true)
-                    }, 1000)
-                },
-                statusCode: {
-                    400: function (event, message) {
-                        $.notifyError("Un des identificateurs n'est pas valide.")
-                    },
-                    500: function (event, message) {
-                        $.notifyError("Une erreur est survenue. Svp réessayez.")
-                    }
-                }
-            });
-        } else {
-            $.notifyError("Le montant entré n'est pas suffisant")
-        }
-        
-    })
-
-    $("#in-cash-received").on("keyup", function () {
-        var currentText = $(this).val()
-        var inCashReturned = $("#in-cash-returned")
-        $("#btn-cash-ok").prop("disabled", true);
-
-        if (isNaN(currentText)) {
-            inCashReturned.val("ERREUR")
-        } else {
-            if (currentText === '') {
-                inCashReturned.val('')
-            } else {
-                cashReceived = parseFloat(currentText)
-                total = parseFloat($("#total").val())
-                if ((cashReceived - total) < 0) 
-                    $("#btn-cash-ok").prop("disabled", true);
-                else 
-                    $("#btn-cash-ok").prop("disabled", false);
-
-                inCashReturned.val(cashReceived - total)
-            }
-        }
-    })
-
-    $("#article-livretsid").on("keyup", function (event) { 
+    $("#article-livretsid").on("keyup", function (event) {
         if (event.keyCode == 13) {  // Enter
-            var livretsId = $(this).val().toUpperCase().trim();
-            var flag = false;
+            var livretsId = $(this).val().toUpperCase().trim()
 
             var ids = $.map($("#articles-table>tbody").find("td.livretsid"), function (element) {
                 return element.innerText
             })
 
-            if (livretsId == null || livretsId === "" /*|| ids.indexOf(livretsId) !== -1*/) return
-            
-            $(".livretsid").each(function (index) {
-                var $me = $(this);
-                if ($me.text() == livretsId) {
-                    $me.parents("tr").remove();
-                    flag = true;
-                }
-            });
-
-            if (flag) return;
+            if (livretsId == null || livretsId === "" || ids.indexOf(livretsId) !== -1)
+                return
 
             $.ajax({
                 method: "POST",
                 url: "/Fair/OfferInfo",
                 dataType: "json",
                 data: {
-                    LivrETSID: livretsId
+                    LivrETSID: livretsId,
+                    PickValidate: true
                 },
                 success: function (data, message, event) {
                     if (event.status == 204) 

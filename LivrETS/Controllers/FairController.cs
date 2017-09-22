@@ -68,6 +68,20 @@ namespace LivrETS.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public ActionResult PickValidate()
+        {
+            var model = new FairViewModel();
+            var currentFair = Repository.GetCurrentFair();
+            var currentStep = 0;
+
+            model.Fair = currentFair;
+            model.CurrentStep = currentStep;
+            model.NumberOfPhases = NUMBER_OF_STEPS;
+            Session[CURRENT_STEP] = currentStep;
+            return View(model);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Pick(FairViewModel model)
@@ -101,20 +115,34 @@ namespace LivrETS.Controllers
                         model.User            = seller;
                         model.UserOffers      = seller.Offers;
                         model.FairOffers      = currentFair.Offers;
+                        if (Session[SELLER] == null) return RedirectToAction(nameof(Pick));
+
+                        ApplicationUser seller1 = Repository.GetUserBy(Id: Session[SELLER] as string);
+                        List<Offer> offers = currentFair.Offers.Intersect(seller1.Offers).ToList();
+                        Session[SELLER_PICKED_ARTICLES] = offers.ConvertAll(new Converter<Offer, string>(offer => offer.Id.ToString()));
+
+                        foreach (var offer in offers)
+                        {
+                            Article article = offer.Article;
+                            
+                            
+                        }
+
+                        model.User = seller1;
                         break;
 
                     case 1:
-                        if (Session[SELLER] == null) return RedirectToAction(nameof(Pick));
+                        /*if (Session[SELLER] == null) return RedirectToAction(nameof(Pick));
                         ApplicationUser seller1 = Repository.GetUserBy(Id: Session[SELLER] as string);
                         Session[SELLER_PICKED_ARTICLES] = 
                             currentFair.Offers.Intersect(seller1.Offers)
-                            .Where(offer => offer.Article.FairState == ArticleFairState.PICKED)
+                            //.Where(offer => offer.Article.FairState == ArticleFairState.PICKED)
                             .ToList()
-                            .ConvertAll(new Converter<Offer, string>(offer => offer.Id.ToString()));
+                            .ConvertAll(new Converter<Offer, string>(offer => offer.Id.ToString()));*/
 
                         Session[CURRENT_STEP] = 2;
                         model.CurrentStep     = 2;
-                        model.User            = seller1;
+                        //model.User            = seller1;
                         break;
 
                     case 2:
@@ -170,7 +198,7 @@ namespace LivrETS.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound);
 
             var offersNotSold = currentFair.Offers
-                .Where(offer => offer.Article.FairState != ArticleFairState.RETREIVED)
+                .Where(offer => offer.Article.FairState != ArticleFairState.RETREIVED && offer.Article.FairState != ArticleFairState.UNKNOWN)
                 .Intersect(user.Offers);
             
             return  Json(from offer in offersNotSold
@@ -346,7 +374,7 @@ namespace LivrETS.Controllers
         }
 
         [HttpPost]
-        public ActionResult OfferInfo(string LivrETSID)
+        public ActionResult OfferInfo(string LivrETSID, bool PickValidate = false)
         {
             var cleanLivrETSID = LivrETSID.Trim().ToUpper();
             TRIBSTD01Helper helper = null;
@@ -364,14 +392,24 @@ namespace LivrETS.Controllers
 
             if (offer.Sold)
                 return new HttpStatusCodeResult(HttpStatusCode.NoContent, "Cet article est déjà vendu");
-            else
-                return Json(new
+
+            if (PickValidate)
+            {
+                Article article = Repository.GetOfferById(offer.Id.ToString()).Article;
+                if (article != null && article.FairState < ArticleFairState.PICKED)
                 {
-                    id = LivrETSID,
-                    sellerFullName = $"{seller.FullName} ({seller.LivrETSID})",
-                    articleTitle = offer.Article.Title,
-                    offerPrice = offer.Price
-                }, contentType: "application/json");
+                    article.MarkAsPicked();
+                    Repository.Update();
+                }
+            }
+
+            return Json(new
+            {
+                id = LivrETSID,
+                sellerFullName = $"{seller.FullName} ({seller.LivrETSID})",
+                articleTitle = offer.Article.Title,
+                offerPrice = offer.Price
+            }, contentType: "application/json");
         }
 
         [HttpPost]
@@ -417,7 +455,6 @@ namespace LivrETS.Controllers
 
             article.MarkAsPicked();
             Repository.Update();
-
             //send notification mail
             /*NotificationManager.getInstance().sendNotification(
                 new Notification(NotificationOptions.ARTICLEPICKEDCONFIRMATION, 

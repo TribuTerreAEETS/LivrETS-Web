@@ -203,6 +203,7 @@ namespace LivrETS.Controllers
                         Offers = currentFair.Offers.Where(offer =>
                             DateTime.Compare(offer.StartDate, offer.Article.DeletedAt) == 0).Select(offer => new
                             {
+                                codeEtd = Repository.GetOfferByUser(offer).BarCode,
                                 Id = offer.Id,
                                 Title = offer.Title,
                                 Price = offer.Price,

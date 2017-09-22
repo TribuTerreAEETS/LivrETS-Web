@@ -471,6 +471,7 @@
     <Content Include="Scripts\fair\EditFair.js" />
     <Content Include="Scripts\fair\informations.js" />
     <Content Include="Scripts\fair\retrieve.js" />
+    <Content Include="Scripts\fair\PickValidate.js" />
     <Content Include="Scripts\fair\sell.js" />
     <Content Include="Scripts\fullcalendar-lang-fr-ca.js" />
     <Content Include="Scripts\home.js" />
@@ -563,6 +564,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <Content Include="Views\Admin\ManageCourses.cshtml" />
+    <Content Include="Views\Fair\PickValidate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -27,6 +27,11 @@ $(document).ready(function () {
         var ids = $.map($("#articles-table").find(".article-livretsid"), function (element) {
             return element.innerText.toUpperCase().trim()
         })
+
+        if (ids.length == 0) {
+            $.notifyError("Aucun article à récupérer");
+            return; 
+        }
         
         $.ajax({
             method: "POST",

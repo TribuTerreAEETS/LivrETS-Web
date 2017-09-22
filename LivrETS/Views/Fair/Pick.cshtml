@@ -96,8 +96,23 @@
 
                         case 1:
                             <div class="row">
+                                <div class="col-md-6">
+                                    <span>Nombre d'&eacute;tiquettes restantes sur la feuille</span>
+                                    <input type="number" class="form-control" style="width: 70px; display: inline;" />
+                                    <button id="btn-preview" type="button" class="btn btn-default">Générer étiquette</button>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-bottom: 10px; margin-top: 10px;">
+                                <div class="col-md-6" style="min-height: 500px; border: 1px black solid; border-radius: 2px;">
+                                    <iframe id="embed-preview" src="" style="width: 100%; height: 500px;"></iframe>
+                                </div>
+                            </div>
+                            break;
+
+                        case 2:
+                            <div class="row">
                                 <div class="col-md-4">
-                                    <input type="text" class="form-control" id="article-code-input" 
+                                    <input type="text" class="form-control" id="article-code-input"
                                            placeholder="Code à barres ou ISBN de l'article" autofocus />
                                 </div>
                             </div>
@@ -141,9 +156,9 @@
                                                             }
                                                         </td>
                                                         <td>
-                                                            <button class="btn btn-sm btn-success pick-article-btn" 
+                                                            <button class="btn btn-sm btn-success pick-article-btn"
                                                                     data-article-id="@offer.Article.Id" type="button">
-                                                                        Cueillir
+                                                                Cueillir
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -182,34 +197,24 @@
                                 </div>
                             </div>
                             break;
-
-                        case 2:
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <span>Nombre d'&eacute;tiquettes restantes sur la feuille</span>
-                                    <input type="number" class="form-control" style="width: 70px; display: inline;" />
-                                    <button id="btn-preview" type="button" class="btn btn-default">Générer étiquette</button>
-                                </div>
-                            </div>
-                            <div class="row" style="margin-bottom: 10px; margin-top: 10px;">
-                                <div class="col-md-6" style="min-height: 500px; border: 1px black solid; border-radius: 2px;">
-                                    <iframe id="embed-preview" src="" style="width: 100%; height: 500px;" ></iframe>
-                                </div>
-                            </div>
-                            break;
                     }
                 </div>
 
                 <div class="row">
                     <div class="@(Model.CurrentStep == 1 ? "col-md-8" : "col-md-6")">
-                        @if (Model.CurrentStep == 2)
+                        @if (Model.CurrentStep == 1)
                         {
                             <button type="button" id="btn-print" class="btn btn-primary pull-right"
                                     disabled>
                                 Imprimer
                             </button>
+                            @Html.ActionLink("Retour", "Pick", "Fair", new { @class="btn btn-default pull-right"})
                         }
-                        <input type="submit" class="btn btn-default pull-right" style="margin-right: 5px;" value="@inputValue" />
+                        else
+                        {
+                            <input type="submit" class="btn btn-default pull-right" style="margin-right: 5px;" value="@inputValue" />
+                        }
+                        
                         
                     </div>
                 </div>

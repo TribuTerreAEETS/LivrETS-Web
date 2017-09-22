@@ -86,10 +86,11 @@ $(document).ready(function () {
                     html += "<ul class='dropdown-menu' aria-labelledby='" + val.Id + "'>";
 
                     for (var i = 0; i < listRoles.length; i++) {
+                        var role = (listRoles[i].Name == "Clerk") ? "Bénévole" : listRoles[i].Name;
                         if (val.Role != listRoles[i].Name) {
                             html += "<li><a href='#' data-rolename='" + listRoles[i].Name + "' "+
                                 "data-userid='" + val.Id + "' class='elt-role'>" +
-                                listRoles[i].Name + "</a></li>";
+                                 role + "</a></li>";
                         }
                     }
 

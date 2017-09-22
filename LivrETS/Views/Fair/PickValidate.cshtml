@@ -1,0 +1,103 @@
+﻿@*
+    LivrETS - Centralized system that manages selling of pre-owned ETS goods.
+    Copyright (C) 2016  TribuTerre
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*@
+@using LivrETS.ViewModels
+@using LivrETS.Models
+
+@{
+    ViewBag.Title = "Ceuillette des articles";
+}
+@section Styles {
+    <style>
+        div.row {
+            margin-top: 10px;
+        }
+
+        .amount-input {
+            background-color: white !important;
+        }
+        div.group-error {
+            margin: 10% 0;
+            min-height: 200px;
+        }
+
+        div.group-error h1 {
+            font-size: 70px;
+        }
+    </style>
+}
+<div class="content">
+    <div class="container">
+        @if (Model.Fair == null /*|| Model.Fair.Phase != FairPhase.SALE*/)
+        {
+            <div class="row">
+                <div class="group-error text-center">
+                    <div class="col-md-12">
+                        <h1 class="primary-color">Désolé!</h1>
+                    </div>
+                    <div class="col-md-12">
+                        <h2>
+                            Vous n'&ecirc;tes pas pr&eacute;sentement en
+                            p&eacute;riode de <span class="primary-color">vente</span>  =(
+                        </h2>
+                    </div>
+                </div>
+            </div>
+
+        }
+        else
+        {
+            <div class="page-header">
+                <h1>Ceuillette des articles <small>pour la Foire </small></h1>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="article-livretsid" placeholder="Espace de numérisation" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Articles</h4>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="table-responsive" style="min-height: 450px; border: 1px solid lightgray; border-radius: 3px;">
+                        <table id="articles-table" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Titre</th>
+                                    <th>Vendeur</th>
+                                    <th>Prix</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/fair/PickValidate.js"></script>
+}

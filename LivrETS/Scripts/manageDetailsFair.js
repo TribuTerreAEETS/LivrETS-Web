@@ -42,6 +42,12 @@ $(document).ready(function () {
             }
         },
         columns: [
+            {
+                visible: false,
+                data: function (val) {
+                    return val.codeEtd;
+                }
+            },
            {
                data: function (val) {
                    return val.UserName;

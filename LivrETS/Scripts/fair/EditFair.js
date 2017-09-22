@@ -90,6 +90,8 @@ $(function () {
                 $btn.prop("disabled", false);
                 if (data.status == 1) {
                     alert
+                        .removeClass("alert-danger")
+                        .addClass("alert-success")
                         .find("#alert-mess")
                         .html(data.message);
                 } else {
