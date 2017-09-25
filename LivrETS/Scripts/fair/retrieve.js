@@ -18,6 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 
 $(document).ready(function () {
+    var table = null;
+    
+
     $("#btn-reinitialize").on("click", function () {
         window.location.reload(true)
     });
@@ -65,7 +68,7 @@ $(document).ready(function () {
 
             //load table offers
             $.fn.dataTable.ext.errMode = 'throw';
-            var table = $('#articles-table').DataTable({
+            table = $('#articles-table').DataTable({
                 createdRow: function (row, data, index) {
                     if (data.sold) {
                         var pricedisplay = parseFloat($("#retreiveprice").text());
@@ -73,7 +76,8 @@ $(document).ready(function () {
 
                         var totalPrice = pricedisplay + price;
                         $("#retreiveprice").text(totalPrice.toFixed(2));
-                    }
+                    } 
+                    
                 },
                 fnInitComplete: function (oSettings, json) {
                     var btnClear = $('<button class="btn btn-sm btn-success btnClearDataTableFilter">Reset</button>');
@@ -123,12 +127,11 @@ $(document).ready(function () {
                     {
                         searchable: false,
                         data: function (val, row) {
-                            
                             if (val.sold) {
-                                return "vendu";
+                                return "<b class='text-success'>vendu</b>";
                             }
 
-                            return "non vendu";
+                            return "<b class='text-danger'>non vendu</b>";
                         }
                     }
                 ]
@@ -137,16 +140,38 @@ $(document).ready(function () {
             });
 
             var input_search = $("input[type='search']");
+            
             input_search.focus();
-            $("#btn-reset-search").on("click", function (e) {
-                /*input_search.val("");
-                table.ajax.refresh();*/
-                //oTable_events.fnFilter($("input[type='search']").val())
-            });
+            /*table.on("search", function (e) {
+                var price = 0;
+                var total = 0;
+                $("#articles-table tr").each(function () {
+                    var $me = $(this);
+                    if (($me.hasClass("odd") || $me.hasClass("even")) && $me.children("td:nth-child(5)").text() == "vendu") {
+                        var price = parseFloat($me.children("td:nth-child(4)").text());
+                        total += price;
+                    }
+
+                });
+                $("#retreiveprice").text(total);
+            });*/
 
         }
-    });
 
+        
+    });
     
-    
+    $("input[type='search']").on("keyup", function (e) {
+        var price = 0;
+        var total = 0;
+        $("#articles-table tr").each(function () {
+            var $me = $(this);
+            if (($me.hasClass("odd") || $me.hasClass("even")) && $me.children("td:nth-child(5)").text() == "vendu") {
+                var price = parseFloat($me.children("td:nth-child(4)").text());
+                total += price;
+            }
+
+        });
+        $("#retreiveprice").text(total);
+    });
 });
