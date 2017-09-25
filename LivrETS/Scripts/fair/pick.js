@@ -48,7 +48,14 @@ function markArticleAsPicked(articleId, trTagToMove) {
 }
 
 $(document).ready(function () {
-    $.preventEnterToSubmit()
+    $.preventEnterToSubmit();
+
+    $("#UserBarCode").on("keyup", function (event) {
+        if (event.keyCode == 13) {  // Enter
+            $("form").submit();
+        }
+    });
+
     $(".pick-article-btn").on("click", function () {
         window.ArticleId = $(this).attr("data-article-id")
         window.TrTagOfArticle = $(this).parents("tr")

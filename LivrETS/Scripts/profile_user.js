@@ -19,7 +19,7 @@
             type: "POST",
             dataType: "JSON",
             dataSrc: function (val) {
-                //console.log(val)
+                console.log(val)
                 return val.Offers
             }
         },
@@ -65,6 +65,14 @@
                 class: "col-md-1 text-center"
             },
             {
+                data: function (val) {
+                    if (val.ManagedByFair)
+                        return "Foire";
+                    return "Annonce"
+                },
+                class: "col-md-1 text-center"
+            },
+            {
                 class: "text-center",
                 sortable: false,
                 data: function (val) { 
@@ -82,7 +90,7 @@
                         "data-toggle='modal' data-target='#ModalDelOffer'><span class='glyphicon glyphicon-trash'></span></a>";
                     
                     if (val.ManagedByFair) {
-                        if (val.GetBtn == 1 || val.GetBtn == 2)
+                        if ((val.GetBtn == 1 || val.GetBtn == 2) && val.fairState == 0)
                             return btnEdit + " " + btnDel;
 
                         return "Aucune action disponible";

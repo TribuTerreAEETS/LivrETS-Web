@@ -127,7 +127,7 @@ $(document).ready(function () {
                 },
                 success: function (data, message, event) {
                     if (event.status == 204) 
-                        return
+                        $.notifyError(event.statusText)
                     
                     var element = $("<tr>")
                         .append($("<td>").text(data.id).addClass("livretsid"))

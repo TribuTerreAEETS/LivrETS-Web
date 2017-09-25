@@ -649,8 +649,9 @@ namespace LivrETS.Repositories
             if (userLivrETSID != null && andArticleLivrETSID != null)
             {
                 var user = GetUserBy(LivrETSID: userLivrETSID);
-                offerToReturn = user.Offers.Where(offer => (offer.Article.LivrETSID == andArticleLivrETSID) /*&&
-                    (!offer.Article.FairState.Equals(ArticleFairState.SOLD))*/).FirstOrDefault();
+                offerToReturn = user.Offers.Where(offer => (offer.Article.LivrETSID == andArticleLivrETSID) 
+                && DateTime.Compare(offer.Article.DeletedAt, offer.StartDate) != 1
+                /*&& (!offer.Article.FairState.Equals(ArticleFairState.SOLD))*/).FirstOrDefault();
             }
 
             return offerToReturn;

@@ -43,12 +43,12 @@ $(document).ready(function () {
         },
         columns: [
             {
-                visible: false,
                 data: function (val) {
                     return val.codeEtd;
                 }
             },
            {
+               visible: false,
                data: function (val) {
                    return val.UserName;
                }
@@ -66,16 +66,6 @@ $(document).ready(function () {
             {
                 data: function (val) {
                     return parseFloat(val.Price).toFixed(2)+ " $";
-                }
-            },
-            {
-                data: function (val) {
-                    if (val.Sold) {
-                        return "Vendu";
-                    } else {
-                        return "Non vendu";
-                    }
-
                 }
             },
             {
