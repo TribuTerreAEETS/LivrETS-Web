@@ -87,6 +87,12 @@ namespace LivrETS.Models
             return this;
         }
 
+        public Article MarkAsUnPicked()
+        {
+            FairState = ArticleFairState.UNKNOWN;
+            return this;
+        }
+
         public Article MarkAsSold()
         {
             FairState = ArticleFairState.SOLD;

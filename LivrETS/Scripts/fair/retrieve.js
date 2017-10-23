@@ -27,34 +27,10 @@ $(document).ready(function () {
     $("#in-barcode").focus();
 
     $("#btn-retrieve").on("click", function () {
-        var ids = $.map($("#articles-table").find(".article-livretsid"), function (element) {
-            return element.innerText.toUpperCase().trim()
-        })
-
-        if (ids.length == 0) {
-            $.notifyError("Aucun article à récupérer");
-            return; 
-        }
-        
-        $.ajax({
-            method: "POST",
-            url: "/Fair/RetrieveArticles",
-            dataType: "json",
-            data: {
-                ids: ids
-            },
-            success: function () {
-                setTimeout(function () {
-                    window.location.reload(true)
-                }, 0001)
-            },
-            statusCode: {
-                500: function () {
-                    $.notifyError("Une erreur est survenue. Svp réessayer.")
-                }
-            }
-        });
+        recuperation();
     });
+
+  
 
     $("#in-barcode").on("keyup", function (event) {
         if (event.keyCode == 13) {  // Enter
@@ -142,36 +118,45 @@ $(document).ready(function () {
             var input_search = $("input[type='search']");
             
             input_search.focus();
-            /*table.on("search", function (e) {
-                var price = 0;
-                var total = 0;
-                $("#articles-table tr").each(function () {
-                    var $me = $(this);
-                    if (($me.hasClass("odd") || $me.hasClass("even")) && $me.children("td:nth-child(5)").text() == "vendu") {
-                        var price = parseFloat($me.children("td:nth-child(4)").text());
-                        total += price;
-                    }
-
-                });
-                $("#retreiveprice").text(total);
-            });*/
+            input_search.on("keyup", function (e) {
+                if (event.keyCode == 13) {  // Enter
+                    recuperation();
+                }
+            });
 
         }
 
         
     });
-    
-    $("input[type='search']").on("keyup", function (e) {
-        var price = 0;
-        var total = 0;
-        $("#articles-table tr").each(function () {
-            var $me = $(this);
-            if (($me.hasClass("odd") || $me.hasClass("even")) && $me.children("td:nth-child(5)").text() == "vendu") {
-                var price = parseFloat($me.children("td:nth-child(4)").text());
-                total += price;
-            }
 
+    function recuperation(){
+        var ids = $.map($("#articles-table").find(".article-livretsid"), function (element) {
+            return element.innerText.toUpperCase().trim()
+        })
+
+        if (ids.length == 0) {
+            $.notifyError("Aucun article à récupérer");
+            return;
+        }
+
+        $.ajax({
+            method: "POST",
+            url: "/Fair/RetrieveArticles",
+            dataType: "json",
+            data: {
+                ids: ids
+            },
+            success: function () {
+                setTimeout(function () {
+                    window.location.reload(true)
+                }, 0001)
+            },
+            statusCode: {
+                500: function () {
+                    $.notifyError("Une erreur est survenue. Svp réessayer.")
+                }
+            }
         });
-        $("#retreiveprice").text(total);
-    });
+    }
+
 });

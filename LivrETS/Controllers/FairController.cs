@@ -396,11 +396,27 @@ namespace LivrETS.Controllers
             if (PickValidate)
             {
                 Article article = Repository.GetOfferById(offer.Id.ToString()).Article;
-                if (article != null && article.FairState < ArticleFairState.PICKED)
+
+                if(article != null)
                 {
-                    article.MarkAsPicked();
-                    Repository.Update();
+                    if (article.FairState < ArticleFairState.PICKED)
+                    {
+                        article.MarkAsPicked();
+                        Repository.Update();
+                    }
+                    
+                    if (article.FairState == ArticleFairState.PICKED)
+                    {
+                        article.MarkAsUnPicked();
+                        Repository.Update();
+
+                        return Json(new
+                        {
+                            id = 0
+                        }, contentType: "application/json");
+                    }
                 }
+                
             }
 
             return Json(new
@@ -408,7 +424,8 @@ namespace LivrETS.Controllers
                 id = LivrETSID,
                 sellerFullName = $"{seller.FullName} ({seller.LivrETSID})",
                 articleTitle = offer.Article.Title,
-                offerPrice = offer.Price
+                offerPrice = offer.Price,
+                status = true
             }, contentType: "application/json");
         }
 

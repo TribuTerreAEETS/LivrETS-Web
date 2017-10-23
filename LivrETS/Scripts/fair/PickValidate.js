@@ -17,18 +17,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 
 $(document).ready(function () {
-
+    var livretsIdTmp = null;
     $("#article-livretsid").on("keyup", function (event) {
         if (event.keyCode == 13) {  // Enter
-            var livretsId = $(this).val().toUpperCase().trim()
+            var livretsId = $(this).val().toUpperCase().trim();
 
             var ids = $.map($("#articles-table>tbody").find("td.livretsid"), function (element) {
                 return element.innerText
             })
-
-            if (livretsId == null || livretsId === "" || ids.indexOf(livretsId) !== -1)
+            console.log(ids.indexOf(livretsId))
+            if (livretsId == null || livretsId === "" || ids.indexOf(livretsId) !== -1 || ids.indexOf(livretsId) !== 0)
                 return
-
+            
             $.ajax({
                 method: "POST",
                 url: "/Fair/OfferInfo",
@@ -38,41 +38,47 @@ $(document).ready(function () {
                     PickValidate: true
                 },
                 success: function (data, message, event) {
-                    if (event.status == 204) 
+                    
+                    if (event.status == 204)
                         return
                     
-                    var element = $("<tr>")
+                    if (data.id == 0) {
+                        $("#articles-table>tbody").html("")
+                    } else {
+                        var element = $("<tr>")
                         .append($("<td>").text(data.id).addClass("livretsid"))
                         .append($("<td>").text(data.articleTitle))
                         .append($("<td>").text(data.sellerFullName))
                         .append($("<td>").text(data.offerPrice))
 
-                    $("#articles-table>tbody").append(element)
+                        $("#articles-table>tbody").append(element)
 
-                    var ids = $.map($("#articles-table>tbody").find("td.livretsid"), function (element) {
-                        return element.innerText
-                    })
-                    $.ajax({
-                        method: "POST",
-                        url: "/Fair/CalculatePrices",
-                        dataType: "json",
-                        data: {
-                            LivrETSIDs: ids
-                        },
-                        success: function (data) {
-                            $("#subtotal").val(data.subtotal)
-                            $("#commission").val(data.commission)
-                            $("#total").val(data.total)
-                        },
-                        statusCode: {
-                            400: function (event, message) {
-                                $.notifyError("Un des identificateurs n'est pas valide.")
+                        var ids = $.map($("#articles-table>tbody").find("td.livretsid"), function (element) {
+                            return element.innerText
+                        })
+                        $.ajax({
+                            method: "POST",
+                            url: "/Fair/CalculatePrices",
+                            dataType: "json",
+                            data: {
+                                LivrETSIDs: ids
                             },
-                            500: function (event, message) {
-                                $.notifyError("Une erreur est survenue. Svp réessayez.")
+                            success: function (data) {
+                                $("#subtotal").val(data.subtotal)
+                                $("#commission").val(data.commission)
+                                $("#total").val(data.total)
+                            },
+                            statusCode: {
+                                400: function (event, message) {
+                                    $.notifyError("Un des identificateurs n'est pas valide.")
+                                },
+                                500: function (event, message) {
+                                    $.notifyError("Une erreur est survenue. Svp réessayez.")
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
+                    
                 },
                 statusCode: {
                     204: function (data, message, event) {
@@ -86,7 +92,7 @@ $(document).ready(function () {
                         $.notifyError("Une erreur est survenue. Svp réessayez.")
                     }
                 }
-            })
+            });
         }
     })
 })
