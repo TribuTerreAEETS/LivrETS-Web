@@ -27,13 +27,43 @@ $(document).ready(function () {
     $("#in-barcode").focus();
 
     $("#btn-retrieve").on("click", function () {
-        recuperation();
+        var price = 0;
+        var ids = $.map($("#articles-table").find(".article-livretsid"), function (element) {
+            if ($(element).parents("tr").find(".article-livretsstatus").text() == "vendu") {
+                return element.innerText.toUpperCase().trim();
+            }  
+        });
+
+        if (ids.length == 0) {
+            $.notifyError("Aucun article à récupérer");
+            return;
+        }
+
+        $.ajax({
+            method: "POST",
+            url: "/Fair/RetrievePrice",
+            dataType: "json",
+            data: {
+                ids: ids,
+                price: parseFloat($("#retreiveprice").text())
+            },
+            success: function (data) {
+                if (data.status == 1)
+                    $("#retreiveprice").css("color", "green");
+                $.notifySuccess(data.message);
+            },
+            statusCode: {
+                500: function () {
+                    $.notifyError("Une erreur est survenue. Svp réessayer.")
+                }
+            }
+        });
     });
 
-  
 
     $("#in-barcode").on("keyup", function (event) {
         if (event.keyCode == 13) {  // Enter
+            
             var barCode = $(this).val().toUpperCase().trim()
 
             var totalPrice = 0;
@@ -42,8 +72,15 @@ $(document).ready(function () {
             if (barCode === "")
                 return
 
+            
+            //$.fn.dataTable.ext.errMode = 'throw';
+            $.fn.dataTable.ext.errMode = 'none';
+
+            $('#articles-table').on('error.dt', function (e, settings, techNote, message) {
+                    $.notifyError("Une erreur est survenu. Recommencez sinon contactez un administrateur.")
+            }).DataTable();
+
             //load table offers
-            $.fn.dataTable.ext.errMode = 'throw';
             table = $('#articles-table').DataTable({
                 createdRow: function (row, data, index) {
                     if (data.sold) {
@@ -56,22 +93,32 @@ $(document).ready(function () {
                     
                 },
                 fnInitComplete: function (oSettings, json) {
-                    var btnClear = $('<button class="btn btn-sm btn-success btnClearDataTableFilter">Reset</button>');
-                    btnClear.appendTo($('#' + oSettings.sTableId).parents('.dataTables_wrapper').find('.dataTables_filter'));
+                    /*var btnClear = $('<button class="btn btn-sm btn-success btnClearDataTableFilter">Reset</button>');
+                    btnClear.appendTo($('#' + oSettings.sTableId).parents('.dataTables_wrapper').find('.dataTables_filter'));*/
                     $('#' + oSettings.sTableId + '_wrapper .btnClearDataTableFilter').click(function () {
                         $('#' + oSettings.sTableId).dataTable().fnFilter('');
                     });
+                    $("#dataTables_filter").css("margin-right", "70%");
                 },
                 scrollY: "500px",
                 scrollCollapse: true,
                 paging: false,
+                destroy: true,
                 processing: true,
+                error: function (oSettings, json) {
+                    $.notifyError("Aucun utilisateur avec ce code")
+                },
+                language: {
+                    search: " "
+                },
+                dom: 't',
                 ajax: {
                     url: "/Fair/OffersNotSold",
                     type: "POST",
                     dataType: "JSON",
                     data: { UserBarCode: barCode },
                     dataSrc: function (val) {
+                            
                         return val
                     }
                 },
@@ -102,6 +149,7 @@ $(document).ready(function () {
                     },
                     {
                         searchable: false,
+                        "class": "article-livretsstatus",
                         data: function (val, row) {
                             if (val.sold) {
                                 return "<b class='text-success'>vendu</b>";
@@ -115,18 +163,21 @@ $(document).ready(function () {
 
             });
 
-            var input_search = $("input[type='search']");
-            
-            input_search.focus();
-            input_search.on("keyup", function (e) {
-                if (event.keyCode == 13) {  // Enter
-                    recuperation();
-                }
-            });
+            $("#article-search").focus();
 
         }
+    });
 
-        
+    $("#article-search").on("keyup", function (e) {
+        if (e.keyCode == 13) {  // Enter
+            var dataSearch = $(this).val();
+            if (dataSearch != "") {
+                table.search(dataSearch).draw();
+                recuperation();
+            }else
+                $.notifyError("Numero d'étiquette manquant")
+            
+        }
     });
 
     function recuperation(){
@@ -146,10 +197,11 @@ $(document).ready(function () {
             data: {
                 ids: ids
             },
-            success: function () {
-                setTimeout(function () {
+            success: function (data) {
+                /*setTimeout(function () {
                     window.location.reload(true)
-                }, 0001)
+                }, 0001)*/
+                $.notifySuccess("Article récupéré");
             },
             statusCode: {
                 500: function () {

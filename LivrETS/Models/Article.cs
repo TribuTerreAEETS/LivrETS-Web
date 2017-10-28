@@ -24,8 +24,15 @@ namespace LivrETS.Models
         [MaxLength(256)]
         public string SubTitle { get; set; }*/
 
+        //Permet de savoir si largent de cet article qui aurait ete vendu 
+        //lors d'une foire a ete remis a son ancien proprietaire.
+        //Price contient la somme qui a ete remis au vendeur du livre.
+        //private double Price;
         [Required]
-        public double Price { get; set; }
+        public double Price {
+            get;
+            set;
+        }
 
         [Required]
         public ArticleFairState FairState { get; set; }

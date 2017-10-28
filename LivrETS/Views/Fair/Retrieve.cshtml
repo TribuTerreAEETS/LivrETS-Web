@@ -43,6 +43,7 @@
             font-size: 3em;
             font-weight:400;
         }
+        
     </style>
 }
 <div class="content">
@@ -75,48 +76,56 @@
                     <input type="text" class="form-control" id="in-barcode" placeholder="Espace de numérisation" />
                 </div>
                 
-            </div>
+            </div><br />
 
             <div class="row">
-                <div class="col-md-6">
-                    <h4>Articles</h4>
+                <div class="col-md-12">
+                    <label>Articles à rendre</label>
+                    <input type="search" id="article-search" class="input-group" placeholder="no. Étiquette"/>
                 </div>
-            </div>
+            </div><br />
 
             <div class="row">
-                <div class="col-md-6">
-                    <div class="table-responsive" id="group-table">
+                <div class="col-md-12"><h4>Liste articles</h4></div>
+                
+                <div>
+                    <div class="col-md-6">
+                        <div class="table-responsive" id="group-table">
 
-                        <table id="articles-table" class="table-stripped table-bordered table-hover " 
-                               cellspacing="0" width="100%">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Titre</th>
-                                    <th>Vendeur</th>
-                                    <th>Somme à donner</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                            <table id="articles-table" class="table-stripped table-bordered table-hover "
+                                   cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>no. Étiquette</th>
+                                        <th>Titre</th>
+                                        <th>Vendeur</th>
+                                        <th>Somme à donner</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    
-                    <div class="text-center">
-                        <div id="give-price">
-                            <h4>Somme totale à donner</h4>
-                            <span id="retreiveprice">0</span> <span>$CAD</span>
+                    <div class="col-md-6">
+
+                        <div class="text-center">
+                            <div id="give-price">
+
+                                <span id="retreiveprice">0</span> <span>$CAD</span>
+                                <h4>(À rendre)</h4>
+                            </div>
                         </div>
                     </div>
                 </div>
+                
             </div>
 
             <div class="row" style="margin-top: 10px;">
                 <div class="col-md-6">
-                    <button id="btn-reinitialize" type="button" class="btn btn-default">Réinitialiser</button>
-                    <button id="btn-retrieve" type="button" class="btn btn-primary pull-right">R&eacute;cup&eacute;rer</button>
+                    <button id="btn-retrieve" type="button" class="btn btn-primary">Argent remis</button>
+                    <button id="btn-reinitialize" type="button" class="btn btn-defaul pull-right">Suivant</button>
+                    
                 </div>
             </div>
         }

@@ -215,6 +215,51 @@ namespace LivrETS.Controllers
         }
 
         [HttpPost]
+        public ActionResult RetrievePrice(ICollection<string> ids, double price)
+        {
+            bool status = false;
+            string message = null;
+
+            foreach (var id in ids)
+            {
+                if (id == null)
+                    continue;
+
+                TRIBSTD01Helper helper;
+                try
+                {
+                    helper = new TRIBSTD01Helper(id.ToUpper().Trim());
+                }
+                catch (RegexNoMatchException ex)
+                {
+                    message = ex.Message;
+                    continue;
+                }
+
+                var offer = helper.GetOffer();
+
+                if (offer != null && offer.Article.FairState == ArticleFairState.SOLD)
+                {
+                    Repository.AttachToContext(offer);
+                    status = true;
+                    message = "Argent remis";
+                    offer.Article.Price = price;
+                    offer.Article.MarkAsRetrieved();
+                    Repository.Update();
+                }else
+                {
+                    message = "Article non retrouvé";
+                }
+            }
+
+            return Json(new
+            {
+                status = status,
+                message = message
+            }, contentType: "application/json");
+        }
+
+        [HttpPost]
         public ActionResult RetrieveArticles(ICollection<string> ids)
         {
             bool status = false;
@@ -228,19 +273,42 @@ namespace LivrETS.Controllers
                 TRIBSTD01Helper helper;
                 try
                 {
-                    status = true;
-                    message = "Recuperation faite";
+                    
                     helper = new TRIBSTD01Helper(id.ToUpper().Trim());
                 }
                 catch (RegexNoMatchException ex)
                 {
                     message = ex.Message;
                     continue;
+                    
                 }
 
                 var offer = helper.GetOffer();
+
+                if(offer == null)
+                    return Json(new
+                    {
+                        status = status,
+                        message = "Article non retrouvé"
+                    }, contentType: "application/json");
+
                 Repository.AttachToContext(offer);
-                offer.Article.MarkAsRetrieved();
+
+                if (offer.Article.FairState == ArticleFairState.RETREIVED)
+                {
+                    status = true;
+                    message = "Recuperation annulé";
+                    offer.Article.MarkAsUnPicked();
+                }
+
+                else
+                {
+                    status = true;
+                    message = "Recuperation réussi";
+                    offer.Article.MarkAsRetrieved();
+                }
+                    
+
                 Repository.Update();
             }
 
@@ -403,9 +471,7 @@ namespace LivrETS.Controllers
                     {
                         article.MarkAsPicked();
                         Repository.Update();
-                    }
-                    
-                    if (article.FairState == ArticleFairState.PICKED)
+                    }else if (article.FairState == ArticleFairState.PICKED)
                     {
                         article.MarkAsUnPicked();
                         Repository.Update();

@@ -21,12 +21,12 @@ $(document).ready(function () {
     $("#article-livretsid").on("keyup", function (event) {
         if (event.keyCode == 13) {  // Enter
             var livretsId = $(this).val().toUpperCase().trim();
-
+            
             var ids = $.map($("#articles-table>tbody").find("td.livretsid"), function (element) {
                 return element.innerText
-            })
-            console.log(ids.indexOf(livretsId))
-            if (livretsId == null || livretsId === "" || ids.indexOf(livretsId) !== -1 || ids.indexOf(livretsId) !== 0)
+            });
+
+            if (livretsId == null || livretsId === "" || (ids.indexOf(livretsId) !== -1 && ids.indexOf(livretsId) != 0))
                 return
             
             $.ajax({
@@ -82,7 +82,6 @@ $(document).ready(function () {
                 },
                 statusCode: {
                     204: function (data, message, event) {
-                        console.log(data)
                         $.notifyError(event.statusText)
                     },
                     400: function (event, message) {
