@@ -75,7 +75,6 @@ namespace LivrETS.Models
         /// <returns>An Offer or null if not found.</returns>
         public Offer GetOffer()
         {
-
             Offer offer = null;
             using (var repo = new LivrETSRepository())
             {

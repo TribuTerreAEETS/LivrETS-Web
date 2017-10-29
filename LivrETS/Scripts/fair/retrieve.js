@@ -48,8 +48,11 @@ $(document).ready(function () {
                 price: parseFloat($("#retreiveprice").text())
             },
             success: function (data) {
-                if (data.status == 1)
+                if (data.status == 1) {
                     $("#retreiveprice").css("color", "green");
+                    $("#give-price").find("h4").html("(Remis)")
+                }
+                    
                 $.notifySuccess(data.message);
             },
             statusCode: {
@@ -65,15 +68,12 @@ $(document).ready(function () {
         if (event.keyCode == 13) {  // Enter
             
             var barCode = $(this).val().toUpperCase().trim()
-
             var totalPrice = 0;
             var $tbody = $("#articles-table>tbody");
 
             if (barCode === "")
                 return
 
-            
-            //$.fn.dataTable.ext.errMode = 'throw';
             $.fn.dataTable.ext.errMode = 'none';
 
             $('#articles-table').on('error.dt', function (e, settings, techNote, message) {
@@ -106,7 +106,7 @@ $(document).ready(function () {
                 destroy: true,
                 processing: true,
                 error: function (oSettings, json) {
-                    $.notifyError("Aucun utilisateur avec ce code")
+                    $.notifyError("Aucun utilisateur avec ce code");
                 },
                 language: {
                     search: " "
@@ -118,7 +118,6 @@ $(document).ready(function () {
                     dataType: "JSON",
                     data: { UserBarCode: barCode },
                     dataSrc: function (val) {
-                            
                         return val
                     }
                 },
@@ -151,6 +150,9 @@ $(document).ready(function () {
                         searchable: false,
                         "class": "article-livretsstatus",
                         data: function (val, row) {
+                            //le focus est place ici car, il faut s'assurer que la table est remplit 
+                            //avant de le deplacer
+                            $("#article-search").focus();
                             if (val.sold) {
                                 return "<b class='text-success'>vendu</b>";
                             }
@@ -162,53 +164,47 @@ $(document).ready(function () {
 
 
             });
-
-            $("#article-search").focus();
-
+            
+            
         }
     });
 
     $("#article-search").on("keyup", function (e) {
         if (e.keyCode == 13) {  // Enter
             var dataSearch = $(this).val();
-            if (dataSearch != "") {
+            var regDataSearch = new RegExp('^[a-zA-Z0-9]{5}[-][a-zA-Z0-9]{5}[-][a-zA-Z0-9]{5}$');
+
+            if (regDataSearch.test(dataSearch)) {
                 table.search(dataSearch).draw();
-                recuperation();
-            }else
-                $.notifyError("Numero d'étiquette manquant")
+
+                $.ajax({
+                    method: "POST",
+                    url: "/Fair/RetrieveArticles",
+                    dataType: "json",
+                    data: {
+                        id: dataSearch
+                    },
+                    success: function (data) {
+                        if (data.status == 1){
+                            if(data.warning == 1)
+                                $.notifyWarning(data.message);
+                            else
+                                $.notifySuccess(data.message);
+                        }
+                            
+                        else
+                            $.notifyError(data.message);
+                    },
+                    statusCode: {
+                        500: function () {
+                            $.notifyError("Une erreur est survenue. Svp réessayer.")
+                        }
+                    }
+                });
+            } else
+                $.notifyError("Erreur numéro d'étiquette");
             
         }
     });
-
-    function recuperation(){
-        var ids = $.map($("#articles-table").find(".article-livretsid"), function (element) {
-            return element.innerText.toUpperCase().trim()
-        })
-
-        if (ids.length == 0) {
-            $.notifyError("Aucun article à récupérer");
-            return;
-        }
-
-        $.ajax({
-            method: "POST",
-            url: "/Fair/RetrieveArticles",
-            dataType: "json",
-            data: {
-                ids: ids
-            },
-            success: function (data) {
-                /*setTimeout(function () {
-                    window.location.reload(true)
-                }, 0001)*/
-                $.notifySuccess("Article récupéré");
-            },
-            statusCode: {
-                500: function () {
-                    $.notifyError("Une erreur est survenue. Svp réessayer.")
-                }
-            }
-        });
-    }
 
 });

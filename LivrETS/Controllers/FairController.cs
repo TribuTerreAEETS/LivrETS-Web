@@ -260,60 +260,54 @@ namespace LivrETS.Controllers
         }
 
         [HttpPost]
-        public ActionResult RetrieveArticles(ICollection<string> ids)
+        public ActionResult RetrieveArticles(string id)
         {
             bool status = false;
+            bool warning = false;
             string message = null;
 
-            foreach (var id in ids)
+            if (id == null)
+                message = "Aucun article trouvé";
+            else
             {
-                if (id == null)
-                    continue;
-
-                TRIBSTD01Helper helper;
+                TRIBSTD01Helper helper = null;
                 try
                 {
-                    
                     helper = new TRIBSTD01Helper(id.ToUpper().Trim());
                 }
                 catch (RegexNoMatchException ex)
                 {
-                    message = ex.Message;
-                    continue;
-                    
+                    message = "Aucun article trouvé";
                 }
 
                 var offer = helper.GetOffer();
 
-                if(offer == null)
-                    return Json(new
-                    {
-                        status = status,
-                        message = "Article non retrouvé"
-                    }, contentType: "application/json");
+                if (offer == null)
+                    message = "Aucun article trouvé";
 
                 Repository.AttachToContext(offer);
 
                 if (offer.Article.FairState == ArticleFairState.RETREIVED)
                 {
                     status = true;
+                    warning = true;
                     message = "Recuperation annulé";
-                    offer.Article.MarkAsUnPicked();
+                    offer.Article.MarkAsPicked();
                 }
-
                 else
                 {
                     status = true;
-                    message = "Recuperation réussi";
+                    message = "Recupération réussi";
                     offer.Article.MarkAsRetrieved();
                 }
-                    
+
 
                 Repository.Update();
             }
 
             return Json(new {
                 status = status,
+                warning = warning,
                 message = message
             }, contentType: "application/json");
         }
