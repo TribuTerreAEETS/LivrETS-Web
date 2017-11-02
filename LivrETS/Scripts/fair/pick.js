@@ -47,6 +47,25 @@ function markArticleAsPicked(articleId, trTagToMove) {
     })
 }
 
+function refuserToucheEntree(event) {
+    // Compatibilité IE / Firefox
+    if (!event && window.event) {
+        event = window.event;
+    }
+    // IE
+    if (event.keyCode == 13) {
+        event.returnValue = false;
+        event.cancelBubble = true;
+    }
+    // DOM
+    if (event.which == 13) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    $.notifyWarning("Vous ne pouvez pas utiliser la touche entrée");
+}
+
 $(document).ready(function () {
     $.preventEnterToSubmit();
 
@@ -55,6 +74,10 @@ $(document).ready(function () {
             $("form").submit();
         }
     });
+
+    /*$("#nbre-article").on("keyup", function (event) {
+        refuserToucheEntree(event);
+    });*/
 
     $(".pick-article-btn").on("click", function () {
         window.ArticleId = $(this).attr("data-article-id")

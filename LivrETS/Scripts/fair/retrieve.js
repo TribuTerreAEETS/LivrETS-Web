@@ -83,6 +83,7 @@ $(document).ready(function () {
             //load table offers
             table = $('#articles-table').DataTable({
                 createdRow: function (row, data, index) {
+                    $("#retreiveprice").text("0");
                     if (data.sold) {
                         var pricedisplay = parseFloat($("#retreiveprice").text());
                         var price = parseFloat($('td', row).eq(3).text());
@@ -163,18 +164,16 @@ $(document).ready(function () {
                 ]
 
 
-            });
-            
-            
+            }); 
         }
     });
 
     $("#article-search").on("keyup", function (e) {
         if (e.keyCode == 13) {  // Enter
             var dataSearch = $(this).val();
-            var regDataSearch = new RegExp('^[a-zA-Z0-9]{5}[-][a-zA-Z0-9]{5}[-][a-zA-Z0-9]{5}$');
+            var tabDataSearch = dataSearch.split('-');
 
-            if (regDataSearch.test(dataSearch)) {
+            if (dataSearch != "" && tabDataSearch.length == 3) {
                 table.search(dataSearch).draw();
 
                 $.ajax({
