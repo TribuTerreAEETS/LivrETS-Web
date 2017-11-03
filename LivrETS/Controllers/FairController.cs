@@ -198,7 +198,7 @@ namespace LivrETS.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound);
 
             var offersNotSold = currentFair.Offers
-                .Where(offer => offer.Article.FairState != ArticleFairState.RETREIVED && offer.Article.FairState != ArticleFairState.UNKNOWN)
+                .Where(offer => /*offer.Article.FairState != ArticleFairState.RETREIVED &&*/ offer.Article.FairState != ArticleFairState.UNKNOWN)
                 .Intersect(user.Offers);
             
             return  Json(from offer in offersNotSold
@@ -208,7 +208,8 @@ namespace LivrETS.Controllers
                              title = offer.Article.Title,
                              userFullName = user.FullName,
                              price = offer.Price,
-                             sold = offer.Sold
+                             sold = offer.Sold,
+                             fairstate = offer.Article.FairState
                          },
                             contentType: "application/json"
                     );
@@ -218,6 +219,7 @@ namespace LivrETS.Controllers
         public ActionResult RetrievePrice(ICollection<string> ids, double price)
         {
             bool status = false;
+            bool warning = false;
             string message = null;
 
             foreach (var id in ids)
@@ -237,23 +239,29 @@ namespace LivrETS.Controllers
                 }
 
                 var offer = helper.GetOffer();
+                Repository.AttachToContext(offer);
 
                 if (offer != null && offer.Article.FairState == ArticleFairState.SOLD)
                 {
-                    Repository.AttachToContext(offer);
                     status = true;
-                    message = "Argent remis";
                     offer.Article.Price = price;
                     offer.Article.MarkAsRetrieved();
                     Repository.Update();
-                }else
+                    message = "Argent remis";
+                }
+                else
                 {
-                    message = "Article non retrouvé";
+                    warning = true;
+                    offer.Article.Price = 0;
+                    offer.Article.MarkAsUnRetrievedSold();
+                    Repository.Update();
+                    message = "Argent non remis";
                 }
             }
 
             return Json(new
             {
+                warning = warning,
                 status = status,
                 message = message
             }, contentType: "application/json");
@@ -291,13 +299,13 @@ namespace LivrETS.Controllers
                 {
                     status = true;
                     warning = true;
-                    message = "Recuperation annulé";
+                    message = "Recuperation annulée";
                     offer.Article.MarkAsPicked();
                 }
                 else
                 {
                     status = true;
-                    message = "Recupération réussi";
+                    message = "Recupération réussit";
                     offer.Article.MarkAsRetrieved();
                 }
 

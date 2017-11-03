@@ -111,6 +111,12 @@ namespace LivrETS.Models
             FairState = ArticleFairState.RETREIVED;
             return this;
         }
+
+        public Article MarkAsUnRetrievedSold()
+        {
+            FairState = ArticleFairState.SOLD;
+            return this;
+        }
     }
 
     public enum ArticleFairState

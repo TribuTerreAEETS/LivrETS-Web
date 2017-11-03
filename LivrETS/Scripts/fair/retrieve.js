@@ -18,15 +18,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 
 $(document).ready(function () {
+    $("#in-barcode").focus();
+
     var table = null;
     
 
     $("#btn-reinitialize").on("click", function () {
         window.location.reload(true)
     });
-    $("#in-barcode").focus();
-
+    
+    //recuperation de l'argent
     $("#btn-retrieve").on("click", function () {
+        var $me = $(this);
         var price = 0;
         var ids = $.map($("#articles-table").find(".article-livretsid"), function (element) {
             if ($(element).parents("tr").find(".article-livretsstatus").text() == "vendu") {
@@ -39,6 +42,7 @@ $(document).ready(function () {
             return;
         }
 
+        $me.html("Loading...");
         $.ajax({
             method: "POST",
             url: "/Fair/RetrievePrice",
@@ -50,10 +54,17 @@ $(document).ready(function () {
             success: function (data) {
                 if (data.status == 1) {
                     $("#retreiveprice").css("color", "green");
-                    $("#give-price").find("h4").html("(Remis)")
+                    $("#give-price").find("h4").html("(Remis)");
+                    $.notifySuccess(data.message);
+                } else {
+                    if (data.warning == 1) {
+                        $("#retreiveprice").css("color", "black");
+                        $("#give-price").find("h4").html("(À rendre)");
+                        $.notifyWarning(data.message);
+                    }
                 }
-                    
-                $.notifySuccess(data.message);
+                $me.html("ARGENT REMIS");
+                table.ajax.reload();
             },
             statusCode: {
                 500: function () {
@@ -67,9 +78,10 @@ $(document).ready(function () {
     $("#in-barcode").on("keyup", function (event) {
         if (event.keyCode == 13) {  // Enter
             
-            var barCode = $(this).val().toUpperCase().trim()
+            var barCode = $(this).val().toUpperCase().trim();
             var totalPrice = 0;
             var $tbody = $("#articles-table>tbody");
+            
 
             if (barCode === "")
                 return
@@ -84,14 +96,23 @@ $(document).ready(function () {
             table = $('#articles-table').DataTable({
                 createdRow: function (row, data, index) {
                     $("#retreiveprice").text("0");
-                    if (data.sold) {
+                    if (data.fairstate == 2) {
                         var pricedisplay = parseFloat($("#retreiveprice").text());
                         var price = parseFloat($('td', row).eq(3).text());
-
                         var totalPrice = pricedisplay + price;
+
                         $("#retreiveprice").text(totalPrice.toFixed(2));
-                    } 
-                    
+                        $(row).css("background-color", "#dff0d8");
+                        $(row).addClass("success");
+                    }
+                    if (data.fairstate == 1) {
+                        $(row).css("background-color", "#fcf8e3");
+                        $(row).addClass("warning");
+                    }
+                    if (data.fairstate == 3) {
+                        $(row).css("background-color", "#d9edf7");
+                        $(row).addClass("info");
+                    }
                 },
                 fnInitComplete: function (oSettings, json) {
                     /*var btnClear = $('<button class="btn btn-sm btn-success btnClearDataTableFilter">Reset</button>');
@@ -101,6 +122,7 @@ $(document).ready(function () {
                     });
                     $("#dataTables_filter").css("margin-right", "70%");
                 },
+                stripeClasses: [],
                 scrollY: "500px",
                 scrollCollapse: true,
                 paging: false,
@@ -119,7 +141,7 @@ $(document).ready(function () {
                     dataType: "JSON",
                     data: { UserBarCode: barCode },
                     dataSrc: function (val) {
-                        return val
+                        return val;
                     }
                 },
                 columns: [
@@ -144,7 +166,7 @@ $(document).ready(function () {
                     {
                         searchable: false,
                         data: function (val) {
-                            return val.price;
+                            return parseFloat(val.price).toFixed(2);
                         }
                     },
                     {
@@ -154,11 +176,14 @@ $(document).ready(function () {
                             //le focus est place ici car, il faut s'assurer que la table est remplit 
                             //avant de le deplacer
                             $("#article-search").focus();
-                            if (val.sold) {
-                                return "<b class='text-success'>vendu</b>";
+                            if (val.fairstate == 1) {
+                                return "Cueillit";
+                            }else if (val.fairstate == 2) {
+                                return "vendu";
                             }
+                            return "récupéré";
 
-                            return "<b class='text-danger'>non vendu</b>";
+                            
                         }
                     }
                 ]
@@ -170,38 +195,43 @@ $(document).ready(function () {
 
     $("#article-search").on("keyup", function (e) {
         if (e.keyCode == 13) {  // Enter
-            var dataSearch = $(this).val();
-            var tabDataSearch = dataSearch.split('-');
+            //custom search in the datatable
+            //$.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+                var dataSearch = $("#article-search").val();
+                var tabDataSearch = dataSearch.split('-');
 
-            if (dataSearch != "" && tabDataSearch.length == 3) {
-                table.search(dataSearch).draw();
+                if (dataSearch != "" && tabDataSearch.length == 3) {
+                    //table.search(dataSearch).draw();
 
-                $.ajax({
-                    method: "POST",
-                    url: "/Fair/RetrieveArticles",
-                    dataType: "json",
-                    data: {
-                        id: dataSearch
-                    },
-                    success: function (data) {
-                        if (data.status == 1){
-                            if(data.warning == 1)
-                                $.notifyWarning(data.message);
+                    $.ajax({
+                        method: "POST",
+                        url: "/Fair/RetrieveArticles",
+                        dataType: "json",
+                        data: {
+                            id: dataSearch
+                        },
+                        success: function (data) {
+                            if (data.status == 1) {
+                                if (data.warning == 1) 
+                                    $.notifyWarning(data.message); 
+                                else 
+                                    $.notifySuccess(data.message);
+                                
+                                table.ajax.reload();
+                            }
                             else
-                                $.notifySuccess(data.message);
+                                $.notifyError(data.message);
+                        },
+                        statusCode: {
+                            500: function () {
+                                $.notifyError("Une erreur est survenue. Svp réessayer.")
+                            }
                         }
-                            
-                        else
-                            $.notifyError(data.message);
-                    },
-                    statusCode: {
-                        500: function () {
-                            $.notifyError("Une erreur est survenue. Svp réessayer.")
-                        }
-                    }
-                });
-            } else
-                $.notifyError("Erreur numéro d'étiquette");
+                    });
+                } else
+                    $.notifyError("Erreur numéro d'étiquette");
+         
+            //table.draw();
             
         }
     });

@@ -9,7 +9,7 @@ namespace LivrETS
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
-            ConfigureHangFire(app);
+            //ConfigureHangFire(app);
         }
     }
 }
