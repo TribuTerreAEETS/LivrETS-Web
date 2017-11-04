@@ -118,7 +118,7 @@ namespace LivrETS.Controllers
                         if (Session[SELLER] == null) return RedirectToAction(nameof(Pick));
 
                         ApplicationUser seller1 = Repository.GetUserBy(Id: Session[SELLER] as string);
-                        List<Offer> offers = currentFair.Offers.Intersect(seller1.Offers).ToList();
+                        List<Offer> offers = currentFair.Offers.Where(offer => offer.Article.FairState < ArticleFairState.PICKED).Intersect(seller1.Offers).ToList();
                         Session[SELLER_PICKED_ARTICLES] = offers.ConvertAll(new Converter<Offer, string>(offer => offer.Id.ToString()));
 
                         foreach (var offer in offers)

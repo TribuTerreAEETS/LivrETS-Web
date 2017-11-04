@@ -21,12 +21,8 @@ $(document).ready(function () {
     $("#article-livretsid").on("keyup", function (event) {
         if (event.keyCode == 13) {  // Enter
             var livretsId = $(this).val().toUpperCase().trim();
-            
-            var ids = $.map($("#articles-table>tbody").find("td.livretsid"), function (element) {
-                return element.innerText
-            });
 
-            if (livretsId == null || livretsId === "" || (ids.indexOf(livretsId) !== -1 && ids.indexOf(livretsId) != 0))
+            if (livretsId == null || livretsId === "")
                 return
             
             $.ajax({
@@ -41,42 +37,24 @@ $(document).ready(function () {
                     
                     if (event.status == 204)
                         return
-                    
+                    console.log($("#articles-table>tbody tr th").length)
                     if (data.id == 0) {
-                        $("#articles-table>tbody").html("")
+                        if(($("#articles-table>tbody tr").length + 1) > 1)
+                            $("#articles-table>tbody tr:last-child()").remove();
+                        else
+                            $("#articles-table>tbody").html("");
+
+                        $.notifyWarning("Article non ceuillit");
                     } else {
-                        var element = $("<tr>")
+                        var element = $("<tr id='" + data.id + "'>")
                         .append($("<td>").text(data.id).addClass("livretsid"))
                         .append($("<td>").text(data.articleTitle))
                         .append($("<td>").text(data.sellerFullName))
-                        .append($("<td>").text(data.offerPrice))
+                        .append($("<td>").text(data.offerPrice));
 
-                        $("#articles-table>tbody").append(element)
+                        $("#articles-table>tbody").append(element);
 
-                        var ids = $.map($("#articles-table>tbody").find("td.livretsid"), function (element) {
-                            return element.innerText
-                        })
-                        $.ajax({
-                            method: "POST",
-                            url: "/Fair/CalculatePrices",
-                            dataType: "json",
-                            data: {
-                                LivrETSIDs: ids
-                            },
-                            success: function (data) {
-                                $("#subtotal").val(data.subtotal)
-                                $("#commission").val(data.commission)
-                                $("#total").val(data.total)
-                            },
-                            statusCode: {
-                                400: function (event, message) {
-                                    $.notifyError("Un des identificateurs n'est pas valide.")
-                                },
-                                500: function (event, message) {
-                                    $.notifyError("Une erreur est survenue. Svp réessayez.")
-                                }
-                            }
-                        });
+                        $.notifySuccess("Article ceuillit");
                     }
                     
                 },

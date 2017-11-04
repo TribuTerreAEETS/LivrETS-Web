@@ -63,7 +63,7 @@ function refuserToucheEntree(event) {
         event.stopPropagation();
     }
 
-    $.notifyWarning("Vous ne pouvez pas utiliser la touche entrée");
+    //$.notifyWarning("Vous ne pouvez pas utiliser la touche entrée");
 }
 
 $(document).ready(function () {
