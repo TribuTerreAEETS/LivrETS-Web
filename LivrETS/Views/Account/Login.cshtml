@@ -32,6 +32,8 @@
     <link rel="stylesheet" href="@Url.Content("~/Content/dropdowns-enhancement.css")">
     <link rel="stylesheet" href="@Url.Content("~/Content/Site.css")" />
     <link rel="stylesheet" href="@Url.Content("~/Content/Login.css")" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="@Url.Content("~/Images/logos/favicon.ico")">
 </head>
 <body>
     <div class="container body-content">
@@ -43,46 +45,81 @@
             </div>
         }
         <div class="row">
-            <div class="col-sm-6 col-md-4 col-md-offset-4">
-                <h1 class="text-center login-title">Connectez-vous pour continuer sur Livr&Eacute;TS</h1>
-                <div class="account-wall">
-                    
-                    <div class="text-center">
-                        <p>
-                            LivrETS<strong style="font-size: 18px;">&#64;etsmtl.net</strong>
-                        </p>
-                        <img src="~/Images/logos/LivreETS.png" width="50%" />
-                    </div>
-                    @{
-                        var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
-                        if (loginProviders.Count() > 0)
-                        {
-                            using (Html.BeginForm("ExternalLogin", "Account", FormMethod.Post, new { @class = "form-signin", role = "form", ReturnUrl = ViewBag.ReturnUrl }))
+            <div class="col-sm-6 col-md-4 col-md-offset-2">
+                <div>
+                    <h1 class="text-danger text-center login-title"><b>Connectez-vous pour continuer sur Livr&Eacute;TS</b></h1>
+                    <div class="account-wall">
+
+                        <div class="text-center">
+                            <p>
+                                Pour vous connectez, utilisé votre adresse gmail de l'école.(<strong style="font-size: 18px;">&#64;etsmtl.net</strong>)<br />
+                                <a href="https://www.etsmtl.ca/Services/sTI/Etudiants/Securite,-comptes-et-acces/Identification">
+                                    Informations Concernant votre compte gmail
+                                </a>
+                            </p>
+                            <img src="~/Images/logos/LivreETS.png" width="50%" />
+                        </div>
+                        @{
+                            var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+                            if (loginProviders.Count() > 0)
                             {
-                                @Html.AntiForgeryToken()
-                                foreach (var provider in loginProviders)
+                                using (Html.BeginForm("ExternalLogin", "Account", FormMethod.Post, new { @class = "form-signin", role = "form", ReturnUrl = ViewBag.ReturnUrl }))
                                 {
-                                    if (@provider.Caption == "Google")
+                                    @Html.AntiForgeryToken()
+                                    foreach (var provider in loginProviders)
                                     {
-                                        <button id="google-btn" name="provider" value="@provider.AuthenticationType" class="btn btn-lg btn-block login-btn" type="submit">
-                                            Connectez-vous avec Google
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button class="btn btn-lg btn-block login-btn" name="provider" value="@provider.AuthenticationType" type="submit">
-                                            @provider.Caption
-                                        </button>
+                                        if (@provider.Caption == "Google")
+                                        {
+                                            <button id="google-btn" name="provider" value="@provider.AuthenticationType" class="btn btn-lg btn-block login-btn" type="submit">
+                                                Connectez-vous avec Google
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-lg btn-block login-btn" name="provider" value="@provider.AuthenticationType" type="submit">
+                                                @provider.Caption
+                                            </button>
+                                        }
                                     }
                                 }
+                                <form asp-controller="Account" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-signin" role="form"></form>
                             }
-                            <form asp-controller="Account" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-signin" role="form">
-                                
-                            </form>
                         }
-                    }
+                        <p class="text-center copyright-login">&copy; TribuTerre @DateTime.Now.Year</p>
+                    </div>
+                    
                 </div>
-                <p class="text-center copyright-login">&copy; TribuTerre @DateTime.Now.Year</p>
+                
+            </div>
+
+            <div class="col-md-offset-1 col-md-4 col-sm-6">
+                <div id="infos-login">
+                    <h2 class="text-danger text-center"><b>IMPORTANT</b></h2>
+                    <div>
+                        Pour utiliser ce service, il est important de respecter certaines régles:
+                        <ol>
+                            <li>
+                                Ce service est uniquement réservé aux personnels et aux étudiants de l'ETS. Vous pouvez uniquement vous connectez à l'aide de votre 
+                                compte gmail fournit par l'ETS. Les informations liées à ce compte se trouve dans ce 
+                                <a href="https://www.etsmtl.ca/Services/sTI/Etudiants/Securite,-comptes-et-acces/Identification">lien</a>.
+                            </li>
+                            <li>Vous devez proposer aux autres utiliusateurs que des articles dont vous etes les propriétaires.</li>
+                            <li>Vous ne devez pas proposer aux utilisateurs des articles qui sont interdit par les lois en vigeur au canada et à l'ETS.</li>
+                            <li>Vous devez respecter les lois en vigueurs au canada et à l'ETS liés à l'utilisation des services internet.</li>
+                            <li>Vous devez faire attention à ne pas choquer les sensibilités des utilisateurs par vos commantaires et/ou vos 
+                            articles que vous postez.</li>
+                            <li>Il est de votre responsabilité d'etre completement honnete et courtois à l'égard des personnes avec qui vous communiquez à 
+                            travers ce service.</li>
+                        </ol> 
+                        <p>
+                            Il est important de tenir compte de ces règles car, si vous ne le faites pas, 
+                            <b class="text-danger">vous vous exposez à des sanctions appliquées soit par la législation canadienne en vigueur, 
+                            soit par le réglement de l'École des technologies supérieurs en vigueur.</b>
+                        </p>
+                        
+                    </div>
+                </div>
+                
             </div>
         </div>
 
@@ -91,7 +128,9 @@
     <script src="https://code.jquery.com/jquery-2.2.3.min.js"
             integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="
             crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" 
+            integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" 
+            crossorigin="anonymous"></script>
     <script src="@Url.Content("~/Scripts/dropdowns-enhancement.js")"></script>
     
 </body>
