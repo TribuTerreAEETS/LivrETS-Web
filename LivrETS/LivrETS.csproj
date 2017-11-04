@@ -341,6 +341,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\bk_login.jpg" />
     <Content Include="Images\code_barre.jpg" />
     <Content Include="Images\isbn.jpg" />
     <Content Include="Images\logos\aeets.png" />
