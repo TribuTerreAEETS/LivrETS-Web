@@ -19,7 +19,7 @@
             type: "POST",
             dataType: "JSON",
             dataSrc: function (val) {
-                console.log(val)
+                
                 return val.Offers
             }
         },
@@ -28,6 +28,13 @@
                 class: "check-row text-center",
                 sortable: false,
                 data: function (val) {
+                    if (val.ManagedByFair) {
+                        if ((val.GetBtn == 1 || val.GetBtn == 2) && val.fairState == 0)
+                            return "<input type='checkbox' name='check-select-offer' " +
+                                "data-offer-id='" + val.Id + "' />";
+
+                        return "<input type='checkbox' disabled/>";
+                    }
                     return "<input type='checkbox' name='check-select-offer' " +
                         "data-offer-id='" + val.Id + "' />";
                 }
